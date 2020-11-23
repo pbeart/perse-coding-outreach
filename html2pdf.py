@@ -2,13 +2,14 @@
 
 import subprocess
 
-
 def html2pdf(html_text):
     "Generate a bytestring of the string html_text in .pdf format"
+
+    # https://wkhtmltopdf.org/usage/wkhtmltopdf.txt
     process = subprocess.Popen(['C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
                                 '--enable-local-file-access',
                                 "--log-level",
-                                "none",
+                                "error",
                                 '-',
                                 '-'],
                                stdin=subprocess.PIPE,
@@ -17,7 +18,7 @@ def html2pdf(html_text):
 
     out, err = process.communicate(input=html_text.encode("utf-8"))
 
-    if process.returncode == 12313130:
+    if process.returncode != 0:
         raise IOError("Error generating PDF, wkhtmltopdf raised:\n"+err.decode("utf-8"))
 
     return out
