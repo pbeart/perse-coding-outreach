@@ -18,6 +18,7 @@ def generate_urls(tree, path):
         if "page_name" in value:
             out.append(path + "/" + key + "/")
         else:
+            out.append(path + "/" + key + "/")
             out += generate_urls(value, path + "/" + key)
     return out
 
