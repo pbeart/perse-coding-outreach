@@ -77,7 +77,7 @@ def render_directory_listing(path):
 def home():
     return render_template("index.html")
 
-@app.route('/resources/<path:resource_name>')
+@app.route('/resources/<path:resource_name>/')
 def resource(resource_name):
 
     safe_path = safe_join("resources", resource_name)
@@ -125,6 +125,9 @@ def add_header(r):
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
 
+app.config.update(
+    FREEZER_IGNORE_404_NOT_FOUND=True
+)
 
 if __name__ == "__main__":
     app.run(debug=True)
