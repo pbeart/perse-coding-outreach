@@ -1,0 +1,13 @@
+<div id="path-graphic">
+    {% for el in resource_path[:-1] %} 
+        <a href="{{ el[0] }}" class="invisible-link path-link">
+            {{ el[1] }}
+        </a>
+        <div class="path-sep">
+            >
+        </div>
+    {% endfor %}
+    <a href="{{ resource_path[-1][0] }}" class="invisible-link path-link">
+        {{ resource_path[-1][1] }}
+    </a>
+</div>

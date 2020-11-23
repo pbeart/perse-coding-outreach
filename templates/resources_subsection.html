@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include 'common_head.html' %}
+        <title>Perse Coding Outreach</title>
+        
+        <link rel="stylesheet" href="/static/subsection.css">
+
+        <meta name="Description" content="Learn or teach the BBC Micro:bit with free online resources">
+        
+
+    </head>
+    <body>
+        
+
+        {% include 'header.html' %}
+        
+        <div class="listing-container">
+            {% include 'path_indicator.html' %}
+            <h1>
+                {{ title }}
+            </h1>
+            
+            {% include 'directory_listing.html' %}  
+    
+            {% include 'footer.html' %}  
+        </div>
+          
+
+    </body>
+    
+</html>

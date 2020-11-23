@@ -1,0 +1,18 @@
+resources:
+  display_name: "Resources"
+  basics:
+    display_name: "The Basics"
+    setting_up:
+      page_name: "1. Setting up your micro:bit"
+    using_microbit:
+      page_name: "2. Using the micro:bit"
+  testing:
+    display_name: "Online Schemes of Work"
+    test:
+      page_name: "Lesson 3: Repetition and iteration "
+    testing:
+      display_name: "subTest pages"
+      test:
+        page_name: "subTest webpage"
+
+

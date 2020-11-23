@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include 'common_head.html' %}
+        <title>Perse Coding Outreach</title>
+        
+        <link rel="stylesheet" href="/static/lesson.css">
+
+        <meta name="Description" content="Learn or teach the BBC Micro:bit with free online resources">
+        
+
+    </head>
+    <body>
+        
+        {% include 'header.html' %}
+        
+        <div id="lesson-container">
+             
+            <div class="contents-box">
+                <h2>Contents</h2>
+                {% for item in contents_list %}
+                    <a href="#{{ item[1] }}">{{ item[0] }}</a>
+                {% endfor %}
+                
+
+            </div>
+            
+            <div class="text-container">
+                {% include 'path_indicator.html' %}
+                <h1>{{ resource_name }}</h1>
+                {{ resource_html|safe }}  
+            </div>
+        </div>
+
+        
+        {% include 'footer.html' %}    
+
+    </body>
+    
+</html>

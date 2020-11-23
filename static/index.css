@@ -1,0 +1,105 @@
+body {
+    font-family: Roboto;
+    margin: 0px;
+    position:absolute;
+    color: #5C338E;
+    width: 100%;
+    
+
+}
+
+#header {
+    background-color: #5C338E;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    display: flex;
+    align-items: stretch;
+    height: 5rem;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.header-item {
+    height: 100%;
+
+
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;    
+}
+
+.header-image {
+    margin-right: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 5rem;
+    width: 5rem;
+}
+
+.header-item img {
+    width: 80%;
+}
+
+.header-button {
+    padding: 0rem 2rem;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.05s;
+}
+
+.header-button:hover {
+    background-color: rgb(125, 84, 175);
+}
+
+#container {
+}
+
+.invisible-link {
+    text-decoration: unset;
+    color: unset;
+
+}
+
+h1 {
+    font-size: 3rem;
+    margin-top: 0px;
+}
+
+.text-container {
+    padding: 3rem;
+    font-size: 1.2em;
+}
+
+@media (max-width: 600px) {
+    .text-container {
+        padding: 1.5rem
+    }
+}
+
+
+
+
+#footer {
+    text-align: center;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#path-graphic {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.path-link {
+    text-decoration: underline;
+}
+
+
+.path-sep {
+    display: inline
+}

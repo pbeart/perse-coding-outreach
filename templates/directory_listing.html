@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="/static/directory_listing.css">
+
+{% macro indent(indent_level) %}
+    {% for n in range(indent_level-1) %}
+        <div class="indent"></div>
+    {% endfor %}
+{% endmacro %}
+
+{% macro show_node(node, level, path, is_first=False) %}
+    {% if "display_name" in node.keys() or is_first %}
+        <div class="indented">
+            {% for key, value in node.items() %}
+                {% if value is mapping %}
+
+                    {% if "page_name" in value %} 
+                        <a href="{{ path + '/' + key }}">{{ value["page_name"]}}</a>
+                    {% else %}
+                        <a href="{{ path + '/' + key }}" class="folder">{{ value["display_name"]}}</span>
+                    {% endif %}
+                    
+                    <br />
+                    {{ show_node(value, level + 1, path + "/" + key) }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+<div class="directory-listing">
+    {{ show_node(tree, 0, base_url_path, True) }}
+</div>
