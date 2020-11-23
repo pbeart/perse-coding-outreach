@@ -4,8 +4,9 @@ Not particularly performant because it is never used in production"""
 import os.path
 import yaml
 from bs4 import BeautifulSoup
+import html2pdf
 
-from flask import Flask, render_template, render_template_string, safe_join, abort
+from flask import Flask, render_template, render_template_string, safe_join, abort, Response
 app = Flask(__name__)
 
 def parse_resource_tree():
@@ -124,6 +125,38 @@ def resource(resource_name):
                                    resource_path = generate_path_indicator(safe_path),
                                    resource_name = get_page_title(safe_path),
                                    contents_list = contents_list)
+    except FileNotFoundError:
+        abort(404)
+
+@app.route('/resources/<path:resource_name>/printable.pdf')
+def resource_pdf(resource_name):
+    "Fetch a printable pdf version of a resource"
+
+    safe_path = safe_join("resources", resource_name)
+
+    try:
+        with open(safe_path + ".html") as resource_file:
+            resource_content = render_template_string(resource_file.read())
+
+            # Generate a list used in the contents template to generate
+            # a contents page list of <h2> elements in the resource
+
+            soup = BeautifulSoup(resource_content)
+            headers = soup.find_all("h2")
+
+            contents_list = []
+            for header in headers:
+                if header.get("id"):
+                    contents_list.append([header.text, header["id"]])
+
+            template_html = render_template("resource.html",
+                                            resource_html = resource_content,
+                                            resource_path = generate_path_indicator(safe_path),
+                                            resource_name = get_page_title(safe_path),
+                                            contents_list = contents_list)
+
+            return Response(html2pdf.html2pdf(template_html), mimetype="application/pdf")
+
     except FileNotFoundError:
         abort(404)
 
