@@ -4,36 +4,58 @@
         {% include 'common_head.html' %}
         <title>Perse Coding Outreach</title>
         
-        <link rel="stylesheet" href="/static/lesson.css">
+        <link rel="stylesheet" href="/static/resource.css">
 
         <meta name="Description" content="Learn or teach the BBC Micro:bit with free online resources">
         
+        {% if printable %}
+            <link rel="stylesheet" href="/static/resource_printable.css">
+        {% endif %}
 
+        <script src="/static/resource.js"></script>
     </head>
     <body>
+        {% if not printable %}
+            {% include 'header.html' %}
+        {% endif %}
         
-        {% include 'header.html' %}
-        
+        {% if printable %}
+            <h1>{{ resource_name }}</h1>
+            {% include 'path_indicator.html' %}
+        {% endif %}
+
         <div id="lesson-container">
              
             <div class="contents-box">
                 <h2>Contents</h2>
                 {% for item in contents_list %}
-                    <a href="#{{ item[1] }}">{{ item[0] }}</a>
+                    <a class="contents-link" href="#{{ item[1] }}">{{ item[0] }}</a>
                 {% endfor %}
                 
-
+                <a class="printable-link">
+                    <img src="/static/images/icon_link.svg">
+                    <span>
+                        Get a printable version of this resource
+                    </span>                    
+                </a>
             </div>
             
             <div class="text-container">
-                {% include 'path_indicator.html' %}
-                <h1>{{ resource_name }}</h1>
+                
+
+                {% if not printable %}
+                    {% include 'path_indicator.html' %}
+                    <h1>{{ resource_name }}</h1>
+                {% endif %}
+
                 {{ resource_html|safe }}  
             </div>
         </div>
 
+        {% if not printable %}
+            {% include 'footer.html' %}
+        {% endif %}
         
-        {% include 'footer.html' %}    
 
     </body>
     
