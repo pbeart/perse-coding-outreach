@@ -56,7 +56,6 @@ def get_path_urls_aliases_at_path(path):
 
     for index, path_element in enumerate(path_elements):
         tree_dict = tree_dict[path_element]
-        print(index, path_element, tree_dict, path_elements[:index+1])
         if "page_name" in tree_dict:
             name = tree_dict["page_name"]
         elif "display_name" in tree_dict:

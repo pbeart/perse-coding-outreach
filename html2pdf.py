@@ -18,9 +18,7 @@ def fix_sources(html_text, app):
 
         for image in soup.find_all("img"):
             response = client.get(image["src"])
-            
             data = response.data
-
             mimetype = response.mimetype
 
             encoded_data = base64.b64encode(data).decode("utf-8")
@@ -30,9 +28,7 @@ def fix_sources(html_text, app):
            
 
         for link in soup.find_all("link"):
-
             if "stylesheet" in link["rel"]:
-                print("Fetching "+link["href"])
                 if is_url_external(link["href"]):
                     response = requests.get(link["href"])
                     data = response.text
@@ -63,8 +59,7 @@ def html2pdf(html_text, app):
                                stderr=subprocess.PIPE)
 
     out, err = process.communicate(input=fix_sources(html_text, app).encode("utf-8"))
-    print("--------------------")
-    print(err)
+
     if process.returncode != 0:
         raise IOError("Error generating PDF, wkhtmltopdf raised:\n"+err.decode("utf-8"))
 
