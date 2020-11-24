@@ -1,0 +1,17 @@
+* {
+    box-shadow: none !important;
+
+}
+
+#path-graphic {
+    font-size: 1em
+}
+
+h1 {
+    /* For some reason wkhtmltopdf doesn't like margin-top here... */
+    padding-top: 1.2rem;
+}
+
+.printable-link {
+    display: none
+}
