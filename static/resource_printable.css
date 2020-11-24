@@ -4,14 +4,19 @@
 }
 
 #path-graphic {
-    font-size: 1em
+    font-size: 1em;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
 }
 
 h1 {
     /* For some reason wkhtmltopdf doesn't like margin-top here... */
     padding-top: 1.2rem;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
 }
 
 .printable-link {
     display: none
 }
+
