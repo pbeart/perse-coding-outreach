@@ -1,4 +1,6 @@
-// Responsible for preventing micro:bit code samples from beginning to load until they are scrolled to
+// Responsible for preventing micro:bit code samples from beginning to load until they are scrolled
+// down to, preventing large bandwidth use on page load and Firefox's (occasional) odd jumping
+// behaviour when an iframe loads its content.
 
 let options = {
     rootMargin: '0px',
@@ -6,15 +8,16 @@ let options = {
 }
 
 let callback = (entries, observer) => {
-    entries.forEach(element => {
-        element.target.style.display = "none";
-        //{{ code_url|safe }}
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.querySelector(".makecode-frame").src = entry.target.getAttribute("makecode-src");
+        }
     })
 }
 
 let observer = new IntersectionObserver(callback, options);
 
-let code_embeds = document.querySelector(".makecode-embed");
+let code_embeds = document.querySelectorAll(".makecode-embed");
 
 code_embeds.forEach(element => {
     observer.observe(element);
