@@ -8,6 +8,7 @@ import requests
 CONFIG = {"package-urls":
           {
            "ubuntu-focal": "https://github.com/zakird/wkhtmltopdf_binary_gem/blob/master/bin/wkhtmltopdf_ubuntu_20.04_amd64.gz?raw=true",
+           "ubuntu-xenial": "https://github.com/zakird/wkhtmltopdf_binary_gem/blob/master/bin/wkhtmltopdf_ubuntu_18.04_amd64.gz?raw=true",
           }
          }
 
@@ -30,8 +31,16 @@ def get_wkhtmltopdf():
 
         distribution, _version, ver_name = distro.linux_distribution()
 
-        if distribution == "Ubuntu" and ver_name == "focal":
-            response = requests.get(CONFIG["package-urls"]["ubuntu-focal"])
+        if distribution == "Ubuntu":
+            if ver_name == "focal":
+                response = requests.get(CONFIG["package-urls"]["ubuntu-focal"])
+            elif ver_name == "xenial":
+                response = requests.get(CONFIG["package-urls"]["ubuntu-xenial"])
+            else:
+                raise OSError("Only Ubuntu Focal and Xenial are supported for retrieving"
+                              "wkhtmltopdf builds, place the downloaded executable at"
+                              "bin/wkhtmltopdf.")
+
             os.makedirs("./tmp/wkhtmltopdf")
 
             with open('./tmp/wkhtmltopdf/wkhtmltopdf.gz', 'wb') as output:
@@ -44,7 +53,7 @@ def get_wkhtmltopdf():
             os.system("chmod +x ./bin/wkhtmltopdf")
             return "./bin/wkhtmltopdf"
 
-    raise OSError("Only Ubuntu Focal is supported for retrieving wkhtmltopdf"
+    raise OSError("Only Ubuntu Focal and Xenial are supported for retrieving wkhtmltopdf"
                   "builds, place the downloaded executable at bin/wkhtmltopdf.")
 
 if __name__ == "__main__":
