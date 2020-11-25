@@ -17,6 +17,7 @@ def generate_urls(tree, path):
 
         if "page_name" in value:
             out.append(path + "/" + key + "/")
+            out.append(path + "/" + key + "/printable.pdf")
         else:
             out.append(path + "/" + key + "/")
             out += generate_urls(value, path + "/" + key)

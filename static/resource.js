@@ -1,5 +1,9 @@
 // Responsible for preventing micro:bit code samples from beginning to load until they are scrolled to
 
+window.addEventListener("beforeprint", function(event) {
+    document.location.href = "printable.pdf"
+});
+
 let options = {
     rootMargin: '0px',
     threshold: 0.5
@@ -19,8 +23,4 @@ let code_embeds = document.querySelector(".makecode-embed");
 code_embeds.forEach(element => {
     observer.observe(element);
 })
-
-
-
-
 

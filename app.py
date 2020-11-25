@@ -152,9 +152,10 @@ def resource_pdf(resource_name):
                                             resource_html = resource_content,
                                             resource_path = generate_path_indicator(safe_path),
                                             resource_name = get_page_title(safe_path),
-                                            contents_list = contents_list)
+                                            contents_list = contents_list,
+                                            printable=True)
 
-            return Response(html2pdf.html2pdf(template_html), mimetype="application/pdf")
+            return Response(html2pdf.html2pdf(template_html, app), mimetype="application/pdf")
 
     except FileNotFoundError:
         abort(404)
