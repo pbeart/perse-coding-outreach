@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 import base64
 import re
 import requests
+import get_wkhtmltopdf
+
+wkhtmltopdf_executable = get_wkhtmltopdf.get_wkhtmltopdf()
 
 def is_url_external(url):
     if re.search("^(?:[a-z]+:)?//", url):
@@ -44,7 +47,7 @@ def html2pdf(html_text, app):
     "Generate a bytestring of the string html_text in .pdf format"
 
     # https://wkhtmltopdf.org/usage/wkhtmltopdf.txt
-    process = subprocess.Popen(['C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
+    process = subprocess.Popen([wkhtmltopdf_executable,
                                 '--enable-local-file-access',
                                 "--log-level",
                                 "info",
