@@ -99,10 +99,18 @@ def resource(resource_name):
     # Generate a safe path that cannot traverse above /resources
     safe_path = safe_join("resources", resource_name)
 
-    # Show directory listing if it's a directory
-    # TODO: This should instead check if the path is a folder in the config
-    if os.path.isdir(safe_path):
-        return render_directory_listing(safe_path)
+    # Show directory listing if it's a folder in the index
+    
+    try:
+        structure = get_resource_tree_value_at_path(safe_path)
+        if "display_name" in list(structure.values())[0]:
+            return render_directory_listing(safe_path)
+
+    # Index folder doesn't exist
+    except KeyError:
+        pass
+
+        
 
     try:
         with open(safe_path + ".html") as resource_file:
