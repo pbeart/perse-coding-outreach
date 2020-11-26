@@ -14,6 +14,8 @@
 
                     {% if "page_name" in value %} 
                         <a href="{{ path + '/' + key }}">{{ value["page_name"]}}</a>
+                    {% elif "link_name" in value %}
+                        <a href="{{ value['href'] }}"><img class="external-link-image" src="/static/images/icon_link.svg">{{ value["link_name"]}}</a>
                     {% else %}
                         <a href="{{ path + '/' + key }}" class="folder">{{ value["display_name"]}}</span>
                     {% endif %}
