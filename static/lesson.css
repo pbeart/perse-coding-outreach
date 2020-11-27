@@ -58,9 +58,11 @@
 }
 
 .makecode-embed {
-    width: 70%;
+    width: 60%;
     background-color: #AEBBED;
     overflow: hidden;
+    align-self: stretch;
+    
 }
 
 .makecode-embed-link {
@@ -98,7 +100,7 @@
 
 .code-explanation {
     color: white;
-    width: 30%;
+    width: 40%;
     padding: 1.5rem;
 }
 
