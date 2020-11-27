@@ -58,7 +58,7 @@
 }
 
 .makecode-embed {
-    width: 60%;
+    width: 70%;
     background-color: #AEBBED;
     overflow: hidden;
 }
@@ -98,10 +98,8 @@
 
 .code-explanation {
     color: white;
-    width: 40%;
-    padding-left: 1.5rem;
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    width: 30%;
+    padding: 1.5rem;
 }
 
 .code-explanation h2 {
@@ -117,6 +115,9 @@ p, ul, ol {
     margin-bottom: 1.5rem;
 }
 
+li {
+    margin-bottom: 0.2rem
+}
 
 @media print {
     #header {
