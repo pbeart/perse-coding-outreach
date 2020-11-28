@@ -56,6 +56,27 @@ class DriveScraper():
                 container = soup.new_tag('div', **{"class":"inline-image"})
                 element.wrap(container)
 
+            if element.name == "table":
+                cells = element.find_all("td")
+                if cells[0].text == "{{microbitembed}}":
+                    embed_id = cells[1].text
+                    embed_content = cells[2]
+
+                    blocks_container = soup.new_tag("div")
+                    blocks_container["class"] = "code"
+
+                    blocks_explanation = soup.new_tag("div")
+                    blocks_explanation["class"] = "code-explanation"
+
+                    blocks_explanation.append(embed_content)
+                    blocks_container.append(blocks_explanation)
+
+                    blocks_jinja_embed = '''{% with code_url="''' + embed_id + '''" %}{% include 'code.html' %}{% endwith %}'''
+
+                    blocks_container.append(BeautifulSoup(blocks_jinja_embed, "html.parser"))
+
+                    element.replace_with(blocks_container)
+
         body.unwrap()
 
         return str(soup)

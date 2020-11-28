@@ -70,7 +70,7 @@ def get_path_urls_aliases_at_path(path):
 
     for index in range(len(path_elements)):
         tree = all_resources.get_at_path("/".join(path_elements[:index]))
-        output.append(["/resources" + "/".join(path_elements[:index]), tree.name])
+        output.append(["/".join(["/resources", *path_elements[:index]]), tree.name])
 
     return output
 
@@ -130,7 +130,7 @@ def route_resource(resource_name):
 
     elif isinstance(resource, resources.HTMLResource):
         return render_template("resource.html",
-                               resource_html = resource.html,
+                               resource_html = render_template_string(resource.html),
                                resource_path = generate_path_indicator(resource_name),
                                resource_name = resource.name,
                                contents_list = contents_list(resource.html))
