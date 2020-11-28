@@ -98,6 +98,17 @@
 
 }
 
+.inline-image {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    
+}
+
+.inline-image img {
+    vertical-align: top;
+    /* why does this work */
+}
+
 .code-explanation {
     color: white;
     width: 40%;

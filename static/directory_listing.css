@@ -20,6 +20,10 @@ a {
     color: unset
 }
 
+.item {
+    display: block
+}
+
 .directory-listing {
     font-size: 1.5rem;
 }
