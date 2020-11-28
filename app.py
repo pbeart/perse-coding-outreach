@@ -2,66 +2,75 @@
 Not particularly performant because it is never used in production"""
 
 import os.path
-import yaml
-from bs4 import BeautifulSoup
-import html2pdf
+import os
 
-from flask import Flask, render_template, render_template_string, safe_join, abort, Response
+from bs4 import BeautifulSoup
+from flask import Flask, render_template, render_template_string, abort
 app = Flask(__name__)
 
-def parse_resource_tree():
-    "Read the content-index.yaml file and return it as a dictionary"
+from utils import gdrive_parsing, yaml_parsing, resources
 
-    # This is inefficient but the site is static so it doesn't matter
-    # so long as it doesn't make it unusable and it avoids any caching
-    # problems
 
-    with open("content-index.yaml", "r") as tree_file:
-        struct = yaml.safe_load(tree_file)
-        return struct
+def load_all_resources(content_yaml_path=None, gdrive_folder_id=None):
+    "Load all resources from YAML and GDrive sources"
+    if gdrive_folder_id:
+        gdrive_scraper = gdrive_parsing.DriveScraper(os.environ["GDRIVE_API_KEY"])
+        gdrive_resources = gdrive_scraper.enumerate_gdrive_folder(os.environ["GDRIVE_FOLDER_ID"], "resources")
+    else:
+        gdrive_resources = None
 
-def get_resource_tree_value_at_path(path):
-    """Return the structure or value at the path 'path' in the
-    content-index.yaml structure"""
-    path_elements = path.split("/")
+    if content_yaml_path:
+        yaml_resources = yaml_parsing.fetch_yaml_resources(content_yaml_path)
+    else:
+        yaml_resources = None
 
-    assert len(path_elements) > 0
+    merged_resources = resources.ResourceFolder([], "Resources", "resources")
 
-    tree_dict = parse_resource_tree()
+    merged_resources = merged_resources.merged_with(yaml_resources)
+    merged_resources = merged_resources.merged_with(gdrive_resources)
 
-    path_element = path_elements[0]
-    for path_element in path_elements:
-        tree_dict = tree_dict[path_element]
+    return merged_resources
 
-    return {path_element: tree_dict}
+all_resources = load_all_resources("content-index.yaml", "1Ol0myByAz6lSKQM3QNuqJleAej-cMvJD")
 
-def get_page_title(path):
-    "Return the title of the page at the given path"
-    path_elements = path.split("/")
-    tree_dict = parse_resource_tree()
+def contents_list(html_text):
+    "Generate a contents list from the provided HTML"
 
-    for path_element in path_elements:
-        tree_dict = tree_dict[path_element]
+    soup = BeautifulSoup(html_text)
+    headers = soup.find_all("h2")
+    contents = []
+    for header in headers:
+        if header.get("id"):
+            contents.append([header.text, header["id"]])
 
-    return tree_dict["page_name"]
+    return contents
+
+@app.context_processor
+def resource_type():
+    "Add Jinja-available function to get the type of a resource object"
+    def _resource_type(resource):
+        if isinstance(resource, resources.ResourceFolder):
+            return "ResourceFolder"
+        elif isinstance(resource, resources.FileResource):
+            return "FileResource"
+        elif isinstance(resource, resources.HTMLResource):
+            return "HTMLResource"
+        elif isinstance(resource, resources.LinkResource):
+            return "LinkResource"
+        return "None"
+    return {"resource_type": _resource_type}
 
 def get_path_urls_aliases_at_path(path):
     """Return a list of tuples containing url and display name for each
-    stage in a path, like [('/folder/file', 'File'), ...],"""
+    stage in a path, like [('/folder/item', 'Item'), ...],"""
     output = []
 
     path_elements = path.split("/")
 
-    tree_dict = parse_resource_tree()
 
-    for index, path_element in enumerate(path_elements):
-        tree_dict = tree_dict[path_element]
-        if "page_name" in tree_dict:
-            name = tree_dict["page_name"]
-        elif "display_name" in tree_dict:
-            name = tree_dict["display_name"]
-
-        output.append(["/"+"/".join(path_elements[:index+1]), name])
+    for index in range(len(path_elements)):
+        tree = all_resources.get_at_path("/".join(path_elements[:index]))
+        output.append(["/resources" + "/".join(path_elements[:index]), tree.name])
 
     return output
 
@@ -73,110 +82,72 @@ def generate_path_indicator(path):
 
 def render_directory_listing(path):
     "Render a directory listing page for the given path."
-    tree = get_resource_tree_value_at_path(path)
 
-    if len(path.split("/")) > 1:
-        base_path = "/" + "/".join(path.split("/")[:-1])
+    tree = all_resources.get_at_path(path)
+
+    path_elements = [element for element in path.split("/") if element != ""]
+
+    if len(path_elements) == 0:
+        base_path = "/resources"
     else:
-        # Avoid double / when appending url like /sub_page
-        base_path = "/".join(path.split("/")[:-1])
+        base_path = "/resources/" + "/".join(path_elements)
 
     return render_template("resources_subsection.html",
                            tree=tree,
-                           title=list(tree.values())[0]["display_name"],
+                           title=tree.name,
                            base_url_path = base_path,
                            resource_path=generate_path_indicator(path))
 
 @app.route('/')
-def home():
+def route_home():
     "Homepage"
     return render_template("index.html")
 
 @app.route('/resources/<path:resource_name>/')
-def resource(resource_name):
+def route_resource(resource_name):
     "Fetch a resource"
 
-    # Generate a safe path that cannot traverse above /resources
-    safe_path = safe_join("resources", resource_name)
-
-    # Show directory listing if it's a folder in the index
-    
     try:
-        structure = get_resource_tree_value_at_path(safe_path)
-        if "display_name" in list(structure.values())[0]:
-            return render_directory_listing(safe_path)
-
-    # Index folder doesn't exist
+        resource = all_resources.get_at_path(resource_name)
     except KeyError:
-        pass
-
-        
-
-    try:
-        with open(safe_path + ".html") as resource_file:
-            resource_content = render_template_string(resource_file.read())
-
-            # Generate a list used in the contents template to generate
-            # a contents page list of <h2> elements in the resource
-
-            soup = BeautifulSoup(resource_content)
-            headers = soup.find_all("h2")
-
-            contents_list = []
-            for header in headers:
-                if header.get("id"):
-                    contents_list.append([header.text, header["id"]])
-
-            return render_template("resource.html",
-                                   resource_html = resource_content,
-                                   resource_path = generate_path_indicator(safe_path),
-                                   resource_name = get_page_title(safe_path),
-                                   contents_list = contents_list)
-    except FileNotFoundError:
         abort(404)
 
-@app.route('/resources/<path:resource_name>/printable.pdf')
-def resource_pdf(resource_name):
-    "Fetch a printable pdf version of a resource"
+    if isinstance(resource, resources.ResourceFolder):
+        return render_directory_listing(resource_name)
 
-    safe_path = safe_join("resources", resource_name)
+    elif isinstance(resource, resources.FileResource):
 
-    try:
-        with open(safe_path + ".html") as resource_file:
+        with open(resource.file_path + ".html") as resource_file:
             resource_content = render_template_string(resource_file.read())
 
-            # Generate a list used in the contents template to generate
-            # a contents page list of <h2> elements in the resource
+        return render_template("resource.html",
+                               resource_html = resource_content,
+                               resource_path = generate_path_indicator(resource_name),
+                               resource_name = resource.name,
+                               contents_list = contents_list(resource_content))
 
-            soup = BeautifulSoup(resource_content)
-            headers = soup.find_all("h2")
-
-            contents_list = []
-            for header in headers:
-                if header.get("id"):
-                    contents_list.append([header.text, header["id"]])
-
-            template_html = render_template("resource.html",
-                                            resource_html = resource_content,
-                                            resource_path = generate_path_indicator(safe_path),
-                                            resource_name = get_page_title(safe_path),
-                                            contents_list = contents_list)
-
-            return Response(html2pdf.html2pdf(template_html), mimetype="application/pdf")
-
-    except FileNotFoundError:
+    elif isinstance(resource, resources.HTMLResource):
+        return render_template("resource.html",
+                               resource_html = resource.html,
+                               resource_path = generate_path_indicator(resource_name),
+                               resource_name = resource.name,
+                               contents_list = contents_list(resource.html))
+    else:
         abort(404)
+
 
 @app.route('/resources/')
-def resources():
+def route_resources():
     "Root resources listing"
-    return render_directory_listing("resources")
+    return render_directory_listing("")
 
 
 @app.errorhandler(404)
-def not_found(_e):
+def route_not_found(_e):
     "Handle 404"
     return render_template('404.html'), 404
+
+
 
 # Disable caching for development. Has no impact on
 # production as this is lost when rendering to static

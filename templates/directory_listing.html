@@ -7,25 +7,20 @@
 {% endmacro %}
 
 {% macro show_node(node, level, path, is_first=False) %}
-    {% if "display_name" in node.keys() or is_first %}
-        <div class="indented">
-            {% for key, value in node.items() %}
-                {% if value is mapping %}
 
-                    {% if "page_name" in value %} 
-                        <a href="{{ path + '/' + key }}">{{ value["page_name"]}}</a>
-                    {% elif "link_name" in value %}
-                        <a href="{{ value['href'] }}"><img class="external-link-image" src="/static/images/icon_link.svg">{{ value["link_name"]}}</a>
-                    {% else %}
-                        <a href="{{ path + '/' + key }}" class="folder">{{ value["display_name"]}}</span>
-                    {% endif %}
-                    
-                    <br />
-                    {{ show_node(value, level + 1, path + "/" + key) }}
-                {% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div class="indented">
+        {% for resource in node.contents %}
+            {% if resource_type(resource) == "ResourceFolder" %} 
+                <a href="{{ path + '/' + resource.id }}" class="folder">{{ resource.name }}</span>
+                {{ show_node(resource, level + 1, path + "/" + resource.id) }}
+            {% elif resource_type(resource) == "LinkResource" %}
+                <a class="item" href="{{ resource.href }}"><img class="external-link-image" src="/static/images/icon_link.svg">{{ resource.name }}</a>
+            {% elif resource_type(resource) == "FileResource" or resource_type(resource) == "HTMLResource" %}
+                <a class="item" href="{{ path + '/' + resource.id }}">{{ resource.name }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
 {% endmacro %}
 
 <div class="directory-listing">
