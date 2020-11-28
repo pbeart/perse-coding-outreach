@@ -116,15 +116,17 @@ def route_resource(resource_name):
         return render_directory_listing(resource_name)
 
     elif isinstance(resource, resources.FileResource):
+        try:
+            with open(resource.file_path + ".html") as resource_file:
+                resource_content = render_template_string(resource_file.read())
 
-        with open(resource.file_path + ".html") as resource_file:
-            resource_content = render_template_string(resource_file.read())
-
-        return render_template("resource.html",
-                               resource_html = resource_content,
-                               resource_path = generate_path_indicator(resource_name),
-                               resource_name = resource.name,
-                               contents_list = contents_list(resource_content))
+            return render_template("resource.html",
+                                resource_html = resource_content,
+                                resource_path = generate_path_indicator(resource_name),
+                                resource_name = resource.name,
+                                contents_list = contents_list(resource_content))
+        except FileNotFoundError:
+            abort(404)
 
     elif isinstance(resource, resources.HTMLResource):
         return render_template("resource.html",

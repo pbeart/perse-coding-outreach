@@ -3,29 +3,26 @@ from app import app as flask_app
 import app
 import yaml
 
+from utils import resources
+
 freezer = Freezer(flask_app)
 
 def generate_urls(tree, path):
 
     out = []
 
-    for key in tree:
-        value = tree[key]
-
-        if not isinstance(value, dict):
-            continue
-
-        if "page_name" in value:
-            out.append(path + "/" + key + "/")
-        elif "display_name":
-            out.append(path + "/" + key + "/")
-            out += generate_urls(value, path + "/" + key)
+    for resource in tree.contents:
+        if isinstance(resource, resources.HTMLResource) or isinstance(resource, resources.FileResource):
+            out.append(path + "/" + resource.id + "/")
+        elif isinstance(resource, resources.ResourceFolder):
+            out.append(path + "/" + resource.id + "/")
+            out += generate_urls(resource, path + "/" + resource.id)
     return out
 
 @freezer.register_generator
-def resources():
-    tree = app.parse_resource_tree()
-    return generate_urls(tree, "")
+def generate_resources():
+    tree = app.all_resources
+    return generate_urls(tree, "/resources")
 
 
 
