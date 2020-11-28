@@ -15,7 +15,7 @@ def load_all_resources(content_yaml_path=None, gdrive_folder_id=None):
     "Load all resources from YAML and GDrive sources"
     if gdrive_folder_id:
         gdrive_scraper = gdrive_parsing.DriveScraper(os.environ["GDRIVE_API_KEY"])
-        gdrive_resources = gdrive_scraper.enumerate_gdrive_folder(os.environ["GDRIVE_FOLDER_ID"], "resources")
+        gdrive_resources = gdrive_scraper.enumerate_gdrive_folder(gdrive_folder_id, "resources")
     else:
         gdrive_resources = None
 
@@ -31,7 +31,7 @@ def load_all_resources(content_yaml_path=None, gdrive_folder_id=None):
 
     return merged_resources
 
-all_resources = load_all_resources("content-index.yaml", "1Ol0myByAz6lSKQM3QNuqJleAej-cMvJD")
+all_resources = load_all_resources("content-index.yaml", os.environ.get("GDRIVE_FOLDER_ID"))
 
 def contents_list(html_text):
     "Generate a contents list from the provided HTML"
