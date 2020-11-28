@@ -61,6 +61,8 @@
     width: 60%;
     background-color: #AEBBED;
     overflow: hidden;
+    align-self: stretch;
+    
 }
 
 .makecode-embed-link {
@@ -110,9 +112,7 @@
 .code-explanation {
     color: white;
     width: 40%;
-    padding-left: 1.5rem;
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding: 1.5rem;
 }
 
 .code-explanation h2 {
@@ -128,6 +128,9 @@ p, ul, ol {
     margin-bottom: 1.5rem;
 }
 
+li {
+    margin-bottom: 0.2rem
+}
 
 @media print {
     #header {

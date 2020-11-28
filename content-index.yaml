@@ -1,5 +1,13 @@
 resources:
   display_name: "Resources"
+  links:
+    display_name: "External Links"
+    microbit_homepage:
+      link_name: "Micro:bit homepage"
+      href: "https://microbit.org/"
+    makecode_editor:
+      link_name: "MakeCode editor"
+      href: "https://makecode.microbit.org/"
   basics:
     display_name: "The Basics"
     setting_up:
@@ -7,12 +15,9 @@ resources:
     using_microbit:
       page_name: "2. Using the micro:bit"
   testing:
-    display_name: "Online Schemes of Work"
-    test:
-      page_name: "Lesson 3: Repetition and iteration "
-    testing:
-      display_name: "subTest pages"
+    display_name: "Example content"
+    lessons:
+      display_name: "Lessons"
       test:
-        page_name: "subTest webpage"
-
+        page_name: "Lesson 3: Repetition and iteration"
 
