@@ -7,16 +7,17 @@
 {% endmacro %}
 
 {% macro show_node(node, level, path, is_first=False) %}
+    {# Here we use quote_plus to stop the already urlencoded resource IDs from being de-encoded by the browser when the url is visited #}
 
     <div class="indented">
         {% for resource in node.contents %}
             {% if resource_type(resource) == "ResourceFolder" %} 
-                <a href="{{ path + '/' + resource.id }}" class="folder">{{ resource.name }}</span>
+                <a href="{{ quote_plus_url(path + '/' + resource.id) }}" class="folder">{{ resource.name }}</span>
                 {{ show_node(resource, level + 1, path + "/" + resource.id) }}
             {% elif resource_type(resource) == "LinkResource" %}
                 <a class="item" href="{{ resource.href }}"><img class="external-link-image" src="/static/images/icon_link.svg">{{ resource.name }}</a>
             {% elif resource_type(resource) == "FileResource" or resource_type(resource) == "HTMLResource" %}
-                <a class="item" href="{{ path + '/' + resource.id }}">{{ resource.name }}</a>
+                <a class="item" href="{{ quote_plus_url(path + '/' + resource.id) }}">{{ resource.name }}</a>
             {% endif %}
         {% endfor %}
     </div>
