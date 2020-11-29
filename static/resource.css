@@ -101,12 +101,12 @@
 .inline-image {
     border-radius: 0.75rem;
     overflow: hidden;
+    display: inline-block;
     
 }
 
 .inline-image img {
-    vertical-align: top;
-    /* why does this work */
+    display: block
 }
 
 .code-explanation {
