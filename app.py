@@ -143,6 +143,10 @@ def route_resources():
     "Root resources listing"
     return render_directory_listing("")
 
+@app.route("/404.html")
+def route_404():
+    "Allow a 404 page to be frozen"
+    return render_template('404.html')
 
 @app.errorhandler(404)
 def route_not_found(_e):

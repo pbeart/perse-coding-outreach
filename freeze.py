@@ -24,7 +24,9 @@ def generate_resources():
     tree = app.all_resources
     return generate_urls(tree, "/resources")
 
-
+@freezer.register_generator
+def generate_404():
+    return ["/404.html"]
 
 if __name__ == '__main__':
     freezer.freeze()
