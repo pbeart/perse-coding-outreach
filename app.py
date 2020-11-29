@@ -46,6 +46,11 @@ def contents_list(html_text):
 
     return contents
 
+
+def quote_plus_url(url):
+        "Take a url with pre-urlencoded segments and give it another round of urlencoding"
+        return "/".join(urllib.parse.quote_plus(seg) for seg in url.split("/"))
+
 @app.context_processor
 def resource_type():
     "Add Jinja-available function to get the type of a resource object"
@@ -61,11 +66,7 @@ def resource_type():
             return "LinkResource"
         return "None"
 
-    def _quote_plus_url(url):
-        "Take a url with pre-urlencoded segments and give it another round of urlencoding"
-        return "/".join(urllib.parse.quote_plus(seg) for seg in url.split("/"))
-
-    return {"resource_type": _resource_type, "quote_plus_url": _quote_plus_url}
+    return {"resource_type": _resource_type, "quote_plus_url": quote_plus_url}
 
 def get_path_urls_aliases_at_path(path):
     """Return a list of tuples containing url and display name for each
