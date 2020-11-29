@@ -1,6 +1,11 @@
+body {
+    width: 100%
+}
+
 #lesson-container {
     display: flex;
     align-items: flex-start;
+    width: 100%;
     
 }
 
@@ -102,11 +107,14 @@
     border-radius: 0.75rem;
     overflow: hidden;
     display: inline-block;
+    width: calc(80% + 3rem);
     
 }
 
 .inline-image img {
-    display: block
+    display: block;
+    width: 100%
+    
 }
 
 .code-explanation {
