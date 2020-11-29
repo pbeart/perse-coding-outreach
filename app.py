@@ -3,6 +3,7 @@ Not particularly performant because it is never used in production"""
 
 import os.path
 import os
+import urllib.parse
 
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, render_template_string, abort
@@ -45,9 +46,15 @@ def contents_list(html_text):
 
     return contents
 
+
+def quote_plus_url(url):
+        "Take a url with pre-urlencoded segments and give it another round of urlencoding"
+        return "/".join(urllib.parse.quote_plus(seg) for seg in url.split("/"))
+
 @app.context_processor
 def resource_type():
     "Add Jinja-available function to get the type of a resource object"
+
     def _resource_type(resource):
         if isinstance(resource, resources.ResourceFolder):
             return "ResourceFolder"
@@ -58,7 +65,8 @@ def resource_type():
         elif isinstance(resource, resources.LinkResource):
             return "LinkResource"
         return "None"
-    return {"resource_type": _resource_type}
+
+    return {"resource_type": _resource_type, "quote_plus_url": quote_plus_url}
 
 def get_path_urls_aliases_at_path(path):
     """Return a list of tuples containing url and display name for each
