@@ -37,7 +37,7 @@ all_resources = load_all_resources("content-index.yaml", os.environ.get("GDRIVE_
 def contents_list(html_text):
     "Generate a contents list from the provided HTML"
 
-    soup = BeautifulSoup(html_text)
+    soup = BeautifulSoup(html_text, "html.parser")
     headers = soup.find_all("h2")
     contents = []
     for header in headers:
