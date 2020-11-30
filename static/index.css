@@ -75,7 +75,18 @@ h1 {
     }
 }
 
+.text-container {
+    padding: 3rem;
+    font-size: 1.2em;
+    max-width: calc(100% - 6rem);
+}
 
+@media (max-width: 600px) {
+    .text-container {
+        padding: 1.5rem;
+        max-width: calc(100% - 3rem);
+    }
+}
 
 
 #footer {
