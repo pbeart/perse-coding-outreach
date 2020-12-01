@@ -79,6 +79,7 @@ h1 {
     padding: 3rem;
     font-size: 1.2em;
     max-width: calc(100% - 6rem);
+    overflow: hidden;
 }
 
 @media (max-width: 600px) {
