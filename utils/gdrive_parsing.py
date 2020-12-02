@@ -60,22 +60,36 @@ class DriveScraper():
                 cells = element.find_all("td")
                 if cells[0].text == "{{microbitembed}}":
                     embed_id = cells[1].text
-                    embed_content = cells[2]
 
                     blocks_container = soup.new_tag("div")
                     blocks_container["class"] = "code"
 
-                    blocks_explanation = soup.new_tag("div")
-                    blocks_explanation["class"] = "code-explanation"
+                    if len(cells) >= 3:
+                        embed_content = cells[2]
+                        blocks_container["class"] = "code"
+                        blocks_explanation = soup.new_tag("div")
+                        blocks_explanation["class"] = "code-explanation"
+                        blocks_explanation.append(embed_content)
+                        blocks_container.append(blocks_explanation)
 
-                    blocks_explanation.append(embed_content)
-                    blocks_container.append(blocks_explanation)
+                    else:
+                        blocks_container["class"] = "code-notext code"
 
                     blocks_jinja_embed = '''{% with code_url="''' + embed_id + '''" %}{% include 'code.html' %}{% endwith %}'''
 
                     blocks_container.append(BeautifulSoup(blocks_jinja_embed, "html.parser"))
 
                     element.replace_with(blocks_container)
+                elif cells[0].text == "{{codeblock}}":
+                    code_content = cells[1]
+
+                    code_block = soup.new_tag("div")
+                    code_block["class"] = "inline-code"
+                    code_block.append(code_content)
+
+                    print(code_block)
+
+                    element.replace_with(code_block)
 
         body.unwrap()
 
