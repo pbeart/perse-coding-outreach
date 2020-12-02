@@ -11,6 +11,8 @@ from googleapiclient.http import MediaIoBaseDownload
 
 from .resources import ResourceFolder, HTMLResource
 
+import urllib.parse
+
 def id_from_name(name):
     "Generate a url-safe ID from a pretty name"
     return urllib.parse.quote_plus(name.replace(" ", "-")).lower()
@@ -90,6 +92,28 @@ class DriveScraper():
                     print(code_block)
 
                     element.replace_with(code_block)
+
+            # Improve resolution on Drawings
+            if element.name == "img":
+                if element.get("src", "").startswith("https://docs.google.com/drawings/"):
+                    parsed_url = urllib.parse.urlparse(element["src"])
+                    query_string = urllib.parse.parse_qs(parsed_url.query)
+                    if "w" in query_string and "h" in query_string:
+                        target_width = 1200 # Target image width in pixels
+                        new_width = target_width
+
+                        old_width = int(query_string["w"][0])
+                        old_height = int(query_string["h"][0])
+
+                        new_height = int(old_height * (target_width/old_width))
+
+                        query_string["w"] = [str(new_width)]
+                        query_string["h"] = [str(new_height)]
+
+                        parsed_url = parsed_url._replace(query = urllib.parse.urlencode(query_string, doseq=True))
+
+                        element["src"] = urllib.parse.urlunparse(parsed_url)
+
 
         body.unwrap()
 
